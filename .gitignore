@@ -1,0 +1,24 @@
+.history/
+.vscode/
+__pycache__/
+.mypy_cache/
+.DS_Store
+*.zip
+*.gz
+*.tar
+*.wav
+*.lst
+*.hdf5
+*.jsonl
+.terraform*
+*.code-workspace
+.history/
+docs/
+.cache/*
+
+build/credentials.sh
+data/*
+for_finetuning/*
+
+# Storing the NYU key to keep it out of the repo
+NYU_key.txt
