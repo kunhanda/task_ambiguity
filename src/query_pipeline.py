@@ -1,8 +1,8 @@
 import pandas as pd
 
-from api_access import OpenAI_APIAccess
-from metric_wrangler import MetricWrangler
-from prompt import Prompt
+from src.structures.api_access import OpenAI_APIAccess
+from src.structures.metric_wrangler import MetricWrangler
+from src.structures.prompt import Prompt
 
 
 class QueryPipeline:

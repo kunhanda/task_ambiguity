@@ -1,11 +1,7 @@
 import random
 
-from example_generation import (
-    ProperNounNegationGenerator,
-    ReligiousPronounGenerator,
-    SubjectLocationGenerator,
-)
-from instruction import Instruction
+from src.structures.construction_types import get_generator_from_construction_type
+from src.structures.instruction import Instruction
 
 
 class Prompt:
@@ -68,7 +64,7 @@ class Prompt:
                 needs_instruction, needs_informative, include_ambiguous_examples
             )
 
-    def check_construction_type(self):
+    def _get_generator_for_construction_type(self):
         """
         Checks what type of object to make based upon the specific contruction type
 
@@ -76,24 +72,12 @@ class Prompt:
             None
         Returns:
             construction_obj (ExampleGenerator): the object corresponding to the specific construction type
+
         """
-        construction_generator_classes = {
-            "subject_location": SubjectLocationGenerator(
-                self.construction_type, self.format_type
-            ),
-            "propn_negation": ProperNounNegationGenerator(
-                self.construction_type, self.format_type
-            ),
-            "religious_pronoun": ReligiousPronounGenerator(
-                self.construction_type, self.format_type
-            ),
-        }
 
-        if self.construction_type in construction_generator_classes:
-            construction_obj = construction_generator_classes[self.construction_type]
-            return construction_obj
-
-        raise Exception("invalid construction type")
+        return get_generator_from_construction_type(
+            self.construction_type, self.format_type
+        )
 
     def get_examples(self):
         return self.examples
@@ -139,7 +123,7 @@ class Prompt:
 
         # generates the first two examples using the randomizers explained above
         # selected the correct ExampleGenerator object based on the construction type
-        construction_obj = self.check_construction_type()
+        construction_obj = self._get_generator_for_construction_type()
 
         if include_ambiguous_examples:
             for i in range(2):
@@ -193,7 +177,7 @@ class Prompt:
         )
 
         for _ in range(self.shots - 1):
-            construction_obj = self.check_construction_type()
+            construction_obj = self._get_generator_for_construction_type()
             example = construction_obj.generate_example_given_salient(
                 current_examples[-1]
             )
@@ -234,7 +218,7 @@ class Prompt:
         possible_task_a = ["subject", "religious", "propn"]
         possible_task_b = ["location", "pronoun", "negation"]
 
-        construction_obj = self.check_construction_type()
+        construction_obj = self._get_generator_for_construction_type()
 
         if salient_task in possible_task_a:
             salient = "task_a"

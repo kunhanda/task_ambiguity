@@ -12,8 +12,8 @@ import os
 from dataclasses import asdict, dataclass, field, fields
 from typing import Dict, List
 
-from api_access import OpenAI_APIAccess
-from prompt import Prompt
+from src.structures.api_access import OpenAI_APIAccess
+from src.structures.prompt import Prompt
 
 logger = logging.getLogger("GenerateDataset")
 logging.basicConfig(

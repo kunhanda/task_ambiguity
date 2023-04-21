@@ -1,41 +1,30 @@
 import argparse
 
-from tester import Tester
+from src.structures.construction_types import ConstructionType
+from src.tester import Tester
 
-# from visualizer import Visualizer
-
-CONSTRUCTION_TYPE_CHOICES = [
-    "subject_location",
-    "propn_negation",
-    "religious_pronoun",
-    "location",
-    "subject",
-    "negation",
-    "pronoun",
-    "religious",
-    "propn",
-]
+_CONSTRUCTION_TYPE_CHOICES = ConstructionType.list()
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--type_1",
-        choices=CONSTRUCTION_TYPE_CHOICES,
+        choices=_CONSTRUCTION_TYPE_CHOICES,
         type=str,
         required=False,
         default="subject_location",
     )
     parser.add_argument(
         "--type_2",
-        choices=CONSTRUCTION_TYPE_CHOICES,
+        choices=_CONSTRUCTION_TYPE_CHOICES,
         type=str,
         required=False,
         default="religious_pronoun",
     )
     parser.add_argument(
         "--type_3",
-        choices=CONSTRUCTION_TYPE_CHOICES,
+        choices=_CONSTRUCTION_TYPE_CHOICES,
         type=str,
         required=False,
         default="propn_negation",

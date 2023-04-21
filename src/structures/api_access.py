@@ -6,7 +6,7 @@ import numpy as np
 import openai
 import pandas as pd
 
-from construction_format import ArrowFormat, QAFormat
+from src.structures.construction_format import ArrowFormat, QAFormat
 
 
 class OpenAI_APIAccess:

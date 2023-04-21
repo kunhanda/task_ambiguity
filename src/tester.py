@@ -2,7 +2,7 @@ import time
 
 import pandas as pd
 
-from query_pipeline import QueryPipeline
+from src.query_pipeline import QueryPipeline
 
 
 class Tester:

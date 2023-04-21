@@ -1,57 +1,166 @@
 import random
+from dataclasses import dataclass, field
+from typing import List
 
-from example import Example
+from src.structures.common import ExtendedEnum
+from src.structures.construction_types import ConstructionType
+from src.structures.example import Example
 
-# These are used in multiple subclasses of ExampleGeneration and as such are included as global constants
-URBAN_LOCATIONS = [
-    "laboratory",
-    "theatre",
-    "museum",
-    "courtroom",
-    "apartment building",
-    "restaurant",
-    "house",
-    "film studio",
-    "hotel lobby",
-    "grocery store",
-]
-NATURAL_LOCATIONS = [
-    "river",
-    "pond",
-    "woodlands",
-    "cave",
-    "canyon",
-    "prairie",
-    "jungle",
-    "marsh",
-    "lagoon",
-    "meadow",
-]
 
-HUMAN_SUBJECTS = [
-    "student",
-    "reporter",
-    "hiker",
-    "researcher",
-    "firefighter",
-    "fugitive",
-    "critic",
-    "photographer",
-    "director",
-    "surveyor",
-]
-ANIMAL_SUBJECTS = [
-    "boar",
-    "worm",
-    "hawk",
-    "hound",
-    "butterfly",
-    "snake",
-    "duck",
-    "bear",
-    "mountain lion",
-    "horse",
-]
+@dataclass
+class ExampleCategory:
+    label: str
+    values: List[str] = field(default_factory=list)
+    parent: ConstructionType
+
+
+class UrbanLocations(ExampleCategory):
+
+    label = "urban_location"
+    values = [
+        "laboratory",
+        "theatre",
+        "museum",
+        "courtroom",
+        "apartment building",
+        "restaurant",
+        "house",
+        "film studio",
+        "hotel lobby",
+        "grocery store",
+    ]
+    parent = ConstructionType.LOCATION
+
+
+class NaturalLocations(ExampleCategory):
+
+    label = "natural_location"
+    values = [
+        "river",
+        "pond",
+        "woodlands",
+        "cave",
+        "canyon",
+        "prairie",
+        "jungle",
+        "marsh",
+        "lagoon",
+        "meadow",
+    ]
+    parent = ConstructionType.LOCATION
+
+
+class HumanSubjects(ExampleCategory):
+
+    label = "human_subject"
+    values = [
+        "student",
+        "reporter",
+        "hiker",
+        "researcher",
+        "firefighter",
+        "fugitive",
+        "critic",
+        "photographer",
+        "director",
+        "surveyor",
+    ]
+    parent = ConstructionType.SUBJECT
+
+
+class AnimalSubjects(ExampleCategory):
+
+    label = "animal_subject"
+    values = [
+        "boar",
+        "worm",
+        "hawk",
+        "hound",
+        "butterfly",
+        "snake",
+        "duck",
+        "bear",
+        "mountain lion",
+        "horse",
+    ]
+    parent = ConstructionType.SUBJECT
+
+
+class RegligiousLeaders(ExampleCategory):
+
+    label = "religious_leader"
+    values = [
+        "pope",
+        "reverend",
+        "bishop",
+        "Dalai Lama",
+        "rabbi",
+        "cardinal",
+        "pastor",
+        "deacon",
+        "imam",
+        "ayatollah",
+    ]
+    parent = ConstructionType.RELIGIOUS
+
+
+class SecularLeaders(ExampleCategory):
+
+    label = "secular_leader"
+    values = [
+        "president",
+        "CEO",
+        "principal",
+        "sheriff",
+        "judge",
+        "ambassador",
+        "officer",
+        "prime minister",
+        "colonel",
+        "professor",
+    ]
+    parent = (
+        ConstructionType.RELIGIOUS
+    )  # TODO: check whether to use different construction type
+
+
+class ProperNouns(ExampleCategory):
+
+    label = "propn"
+    values = [
+        "Lebron James",
+        "Bernie Sanders",
+        "Christopher Nolan",
+        "Paul Atreides",
+        "Noam Chomsky",
+        "Serena Williams",
+        "Margot Robbie",
+        "Alexandria Ocasio-Cortez",
+        "Hermione Granger",
+        "Jane Goodall",
+    ]
+    parent = ConstructionType.PROPN
+
+
+class Negations(ExampleCategory):
+    label = "negation"
+    values = ["is not", "was not", "has not been", "may not be", "could not be"]
+
+    parent = ConstructionType.NEGATION
+
+
+class GenerationCategories(ExtendedEnum):
+    URBAN_LOCATIONS = UrbanLocations
+    NATURAL_LOCATIONS = NaturalLocations
+    HUMAN_SUBJECTS = HumanSubjects
+    ANIMAL_SUBJECTS = AnimalSubjects
+    RELIGIGOUS_LEADERS = RegligiousLeaders
+    SECULAR_LEADERS = SecularLeaders
+    PROPN = ProperNouns
+    NEGATATIONS = Negations
+
+
+_POSITIVES = ["is", "was", "has been", "may be", "could be"]
 
 
 class ExampleGenerator:
@@ -68,7 +177,7 @@ class ExampleGenerator:
         self.format_type = format_type
 
     def get_locations(self):
-        return NATURAL_LOCATIONS + URBAN_LOCATIONS
+        return NaturalLocations.values + UrbanLocations.values
 
     def generate_example(
         self, task_a_feature, task_b_feature, active_task_label, salient_task=None
@@ -123,14 +232,14 @@ class SubjectLocationGenerator(ExampleGenerator):
         """
 
         if task_a_label:
-            choice_a = random.choice(HUMAN_SUBJECTS)
+            choice_a = random.choice(HumanSubjects.values)
         else:
-            choice_a = random.choice(ANIMAL_SUBJECTS)
+            choice_a = random.choice(AnimalSubjects.values)
 
         if task_b_label:
-            choice_b = random.choice(URBAN_LOCATIONS)
+            choice_b = random.choice(UrbanLocations.values)
         else:
-            choice_b = random.choice(NATURAL_LOCATIONS)
+            choice_b = random.choice(NaturalLocations.values)
 
         construction = f"The {choice_a} is in the {choice_b}."
 
@@ -165,42 +274,18 @@ class ReligiousPronounGenerator(ExampleGenerator):
         Returns:
             Example (Example): Example object with relevant metadata
         """
-        religious_leaders = [
-            "pope",
-            "reverend",
-            "bishop",
-            "Dalai Lama",
-            "rabbi",
-            "cardinal",
-            "pastor",
-            "deacon",
-            "imam",
-            "ayatollah",
-        ]
-        secular_leaders = [
-            "president",
-            "CEO",
-            "principal",
-            "sheriff",
-            "judge",
-            "ambassador",
-            "officer",
-            "prime minister",
-            "colonel",
-            "professor",
-        ]
 
         if task_a_label:
-            choice_a = random.choice(religious_leaders)
+            choice_a = random.choice(RegligiousLeaders.values)
         else:
-            choice_a = random.choice(secular_leaders)
+            choice_a = random.choice(SecularLeaders.values)
 
         if task_b_label:
             choice_b = "He"
         else:
             choice_b = "She"
 
-        urban_location = random.choice(URBAN_LOCATIONS)
+        urban_location = random.choice(UrbanLocations.values)
 
         construction = f"{choice_b} is in the {urban_location} with the {choice_a}."
 
@@ -235,34 +320,19 @@ class ProperNounNegationGenerator(ExampleGenerator):
         Returns:
             Example (Example): Example object with relevant metadata
         """
-        propn = [
-            "Lebron James",
-            "Bernie Sanders",
-            "Christopher Nolan",
-            "Paul Atreides",
-            "Noam Chomsky",
-            "Serena Williams",
-            "Margot Robbie",
-            "Alexandria Ocasio-Cortez",
-            "Hermione Granger",
-            "Jane Goodall",
-        ]
-
-        positives = ["is", "was", "has been", "may be", "could be"]
-        negatives = ["is not", "was not", "has not been", "may not be", "could not be"]
 
         if task_a_label:
-            choice_a = random.choice(propn)
+            choice_a = random.choice(ProperNouns.values)
         else:
-            choice_a = random.choice(HUMAN_SUBJECTS)
+            choice_a = random.choice(HumanSubjects.values)
             choice_a = "The " + choice_a
 
         if task_b_label:
-            choice_b = random.choice(positives)
+            choice_b = random.choice(_POSITIVES)
         else:
-            choice_b = random.choice(negatives)
+            choice_b = random.choice(Negations.values)
 
-        urban_location = random.choice(URBAN_LOCATIONS)
+        urban_location = random.choice(UrbanLocations.values)
 
         construction = f"{choice_a} {choice_b} in the {urban_location}."
 
